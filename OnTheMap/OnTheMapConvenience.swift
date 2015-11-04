@@ -30,10 +30,8 @@ class OnTheMapConvenience: NSObject {
         //session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { (data, response, downloadError) in
             
-            
             if downloadError != nil {
-                //let newError = UdacityClient.errorForData(data, response: response, error: error)
-                completionHandler(success: false, result: nil, response: nil, errorString: String(stringInterpolationSegment: downloadError.localizedDescription))
+                completionHandler(success: false, result: nil, response: nil, errorString: String(stringInterpolationSegment: downloadError!.localizedDescription))
             } else {
                 completionHandler(success: true, result: data, response: response, errorString: nil)
                 
@@ -53,7 +51,7 @@ class OnTheMapConvenience: NSObject {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         if headers != nil
         {for (key, value) in headers! {
-            request.addValue(value as? String, forHTTPHeaderField: key)
+            request.addValue((value as? String)!, forHTTPHeaderField: key)
             
             }
         }
@@ -69,10 +67,31 @@ class OnTheMapConvenience: NSObject {
         
         request!.HTTPMethod = "POST"
         request!.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request!.HTTPBody = NSJSONSerialization.dataWithJSONObject(passedBody, options: nil, error: &jsonifyError)
+        do {
+            request!.HTTPBody = try NSJSONSerialization.dataWithJSONObject(passedBody, options: [])
+        } catch let error as NSError {
+            jsonifyError = error
+            request!.HTTPBody = nil
+        }
         
         
         return request!
+    }
+    
+    func buildDeleteRequest() -> NSMutableURLRequest {
+        let urlString = OnTheMapConstants.Constants.BaseURLSecure + OnTheMapConstants.Methods.Session
+        let url = NSURL(string: urlString)
+        let request = NSMutableURLRequest(URL: url!)
+        request.HTTPMethod = "DELETE"
+        var xsrfCookie: NSHTTPCookie? = nil
+        let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        for cookie in sharedCookieStorage.cookies! as [NSHTTPCookie] {
+            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+        }
+        if let xsrfCookie = xsrfCookie {
+            request.addValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-Token")
+        }
+        return request
     }
     
     //Create URL for making requests
@@ -99,7 +118,13 @@ class OnTheMapConvenience: NSObject {
         
         var parsingError: NSError? = nil
         
-        let parsedResult: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &parsingError)
+        let parsedResult: AnyObject?
+        do {
+            parsedResult = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+        } catch let error as NSError {
+            parsingError = error
+            parsedResult = nil
+        }
         
         if let error = parsingError {
             completionHandler(result: nil, error: error)
@@ -110,7 +135,7 @@ class OnTheMapConvenience: NSObject {
     
     //Open a URL string in Safari
     func goToURL(url: String) {
-        var link = NSURL(string: url)
+        let link = NSURL(string: url)
         UIApplication.sharedApplication().openURL(link!)
     }
     
@@ -144,11 +169,11 @@ class OnTheMapConvenience: NSObject {
             
         var status: Bool?
         let urlPath: String = "http://www.google.com"
-        var url: NSURL = NSURL(string: urlPath)!
-        var request: NSURLRequest = NSURLRequest(URL: url)
+        let url: NSURL = NSURL(string: urlPath)!
+        let request: NSURLRequest = NSURLRequest(URL: url)
         var response: NSURLResponse?
         
-        var data = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: nil) as NSData?
+        let data = (try? NSURLConnection.sendSynchronousRequest(request, returningResponse: &response)) as NSData?
     
         if let data = data {
         checkResponse(response!) { success, responseCode in
@@ -180,7 +205,7 @@ class OnTheMapConvenience: NSObject {
             /* Append it */
             urlVars += [key + "=" + "\(escapedValue!)"]
         }
-        return (!urlVars.isEmpty ? "?" : "") + join("&", urlVars)
+        return (!urlVars.isEmpty ? "?" : "") + urlVars.joinWithSeparator("&")
     }
     
     //Create a globle instance of this class

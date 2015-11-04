@@ -73,8 +73,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         //Check to see if the user has entered a username and password
         if (usernameEdited != nil && username?.isEmpty == false) && (passwordEdited != nil && password?.isEmpty == false) {
-            println(username)
-            println(password)
         
         //If so, pass username and password into function and attempt login
         UdacityClient.sharedInstance().attemptLoginWithUdacity(username, password: password) { (success, errorString) -> Void in

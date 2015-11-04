@@ -9,7 +9,7 @@
         <!--Login View Controller-->
         <scene sceneID="qUr-2M-nCv">
             <objects>
-                <viewController id="bZS-et-EEc" customClass="LoginViewController" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="bZS-et-EEc" customClass="LoginViewController" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="tFB-Sb-vFj"/>
                         <viewControllerLayoutGuide type="bottom" id="sek-ed-snM"/>
@@ -224,12 +224,18 @@
                                 <segue destination="FtJ-oH-20t" kind="presentation" id="hFc-6k-7GB"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Logout" id="GuL-qm-b1J">
+                            <connections>
+                                <action selector="logoutButtonClicked:" destination="xuv-xI-xOx" id="UKc-i9-VFP"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="On the Map" id="q4b-J1-ogt">
                         <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="ifs-gS-UkS"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="logoutButton" destination="GuL-qm-b1J" id="1vA-ty-x7j"/>
                         <outlet property="postLocation" destination="MIA-13-asO" id="uSh-ta-3mB"/>
                         <outlet property="refreshDataButton" destination="XNR-8g-Znf" id="pwy-xY-9iT"/>
                         <outlet property="studentMapView" destination="q5F-DM-nhr" id="EcE-5H-7fV"/>
@@ -287,9 +293,6 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
                             </textField>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="bq9-fN-gZV">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                            </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter a url link that you would like to share. " textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SEP-ML-fuF">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
@@ -299,6 +302,12 @@
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="yJH-Mg-EkG">
                                 <rect key="frame" x="-10" y="-10" width="20" height="20"/>
                             </activityIndicatorView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Dyw-lI-cUT">
+                                <rect key="frame" x="-10" y="-10" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="bq9-fN-gZV">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                            </mapView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -307,6 +316,7 @@
                             <constraint firstAttribute="bottomMargin" secondItem="bq9-fN-gZV" secondAttribute="bottom" constant="-21" id="4Ee-p2-jXk">
                                 <variation key="widthClass=compact" constant="-20"/>
                             </constraint>
+                            <constraint firstItem="Ni3-CJ-Dz2" firstAttribute="top" secondItem="Dyw-lI-cUT" secondAttribute="bottom" constant="23" id="6J3-vy-O1P"/>
                             <constraint firstItem="SEP-ML-fuF" firstAttribute="leading" secondItem="Rgn-16-f3B" secondAttribute="leadingMargin" constant="17" id="90R-uJ-Nkg">
                                 <variation key="widthClass=compact" constant="0.0"/>
                             </constraint>
@@ -336,7 +346,7 @@
                                 <variation key="widthClass=compact" constant="174"/>
                             </constraint>
                             <constraint firstItem="E0R-Cx-Td5" firstAttribute="top" secondItem="vHs-CM-xJZ" secondAttribute="bottom" constant="8" symbolic="YES" id="UFE-Uo-grR">
-                                <variation key="widthClass=compact" constant="37"/>
+                                <variation key="widthClass=compact" constant="29"/>
                             </constraint>
                             <constraint firstItem="vHs-CM-xJZ" firstAttribute="centerX" secondItem="E0R-Cx-Td5" secondAttribute="centerX" id="USw-9w-UAf">
                                 <variation key="widthClass=compact" constant="0.5"/>
@@ -346,10 +356,13 @@
                             </constraint>
                             <constraint firstItem="zbM-TX-9gx" firstAttribute="leading" secondItem="Rgn-16-f3B" secondAttribute="leadingMargin" constant="46" id="eTT-XT-fJ5"/>
                             <constraint firstItem="vHs-CM-xJZ" firstAttribute="top" secondItem="Rgn-16-f3B" secondAttribute="top" constant="125" id="el8-TT-mSv"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Dyw-lI-cUT" secondAttribute="trailing" constant="174" id="fT5-Pt-Lug"/>
+                            <constraint firstItem="Dyw-lI-cUT" firstAttribute="top" secondItem="zbM-TX-9gx" secondAttribute="bottom" constant="23" id="hit-xY-XMY"/>
                             <constraint firstItem="qb9-jN-s7B" firstAttribute="top" secondItem="Ni3-CJ-Dz2" secondAttribute="bottom" constant="205" id="jyT-Rz-h2W">
                                 <variation key="widthClass=compact" constant="206"/>
                             </constraint>
                             <constraint firstAttribute="trailingMargin" secondItem="jPv-Bo-CFg" secondAttribute="trailing" constant="41" id="lIY-qU-VZH"/>
+                            <constraint firstItem="Dyw-lI-cUT" firstAttribute="leading" secondItem="Rgn-16-f3B" secondAttribute="leadingMargin" constant="174" id="lj0-WS-3Sd"/>
                             <constraint firstItem="E0R-Cx-Td5" firstAttribute="leading" secondItem="Rgn-16-f3B" secondAttribute="leadingMargin" constant="160" id="lmp-0b-KgX">
                                 <variation key="widthClass=compact" constant="138"/>
                             </constraint>
@@ -370,9 +383,10 @@
                                 <exclude reference="Ni3-CJ-Dz2"/>
                                 <exclude reference="E0R-Cx-Td5"/>
                                 <exclude reference="vHs-CM-xJZ"/>
-                                <exclude reference="bq9-fN-gZV"/>
                                 <exclude reference="SEP-ML-fuF"/>
                                 <exclude reference="yJH-Mg-EkG"/>
+                                <exclude reference="Dyw-lI-cUT"/>
+                                <exclude reference="bq9-fN-gZV"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="2rd-x2-e4L"/>
@@ -389,12 +403,16 @@
                                 <exclude reference="sBd-3b-tcx"/>
                                 <exclude reference="OHq-Io-M6e"/>
                                 <exclude reference="eTT-XT-fJ5"/>
+                                <exclude reference="fT5-Pt-Lug"/>
+                                <exclude reference="hit-xY-XMY"/>
+                                <exclude reference="lj0-WS-3Sd"/>
                                 <exclude reference="NPU-EI-DJu"/>
                                 <exclude reference="RhY-jb-C9V"/>
                                 <exclude reference="t4I-Ni-BcK"/>
                                 <exclude reference="PiR-hL-FNR"/>
                                 <exclude reference="UFE-Uo-grR"/>
                                 <exclude reference="lmp-0b-KgX"/>
+                                <exclude reference="6J3-vy-O1P"/>
                                 <exclude reference="Daf-qA-y0f"/>
                                 <exclude reference="Fdw-gn-EGD"/>
                                 <exclude reference="4Ee-p2-jXk"/>
@@ -410,9 +428,10 @@
                                 <include reference="Ni3-CJ-Dz2"/>
                                 <include reference="E0R-Cx-Td5"/>
                                 <include reference="vHs-CM-xJZ"/>
-                                <include reference="bq9-fN-gZV"/>
                                 <include reference="SEP-ML-fuF"/>
                                 <include reference="yJH-Mg-EkG"/>
+                                <include reference="Dyw-lI-cUT"/>
+                                <include reference="bq9-fN-gZV"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="2rd-x2-e4L"/>
@@ -429,12 +448,16 @@
                                 <include reference="sBd-3b-tcx"/>
                                 <include reference="OHq-Io-M6e"/>
                                 <include reference="eTT-XT-fJ5"/>
+                                <include reference="fT5-Pt-Lug"/>
+                                <include reference="hit-xY-XMY"/>
+                                <include reference="lj0-WS-3Sd"/>
                                 <include reference="NPU-EI-DJu"/>
                                 <include reference="RhY-jb-C9V"/>
                                 <include reference="t4I-Ni-BcK"/>
                                 <include reference="PiR-hL-FNR"/>
                                 <include reference="UFE-Uo-grR"/>
                                 <include reference="lmp-0b-KgX"/>
+                                <include reference="6J3-vy-O1P"/>
                                 <include reference="Daf-qA-y0f"/>
                                 <include reference="Fdw-gn-EGD"/>
                                 <include reference="4Ee-p2-jXk"/>
@@ -453,11 +476,12 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="activityIndicator" destination="yJH-Mg-EkG" id="O82-EX-Sh4"/>
+                        <outlet property="geocodeActivityIndicator" destination="Dyw-lI-cUT" id="KvB-Dg-DY2"/>
                         <outlet property="postMapView" destination="bq9-fN-gZV" id="hgW-xz-2Ik"/>
                         <outlet property="studyLocationButton" destination="Ni3-CJ-Dz2" id="VJf-ie-fit"/>
                         <outlet property="studyLocationLabel" destination="jPv-Bo-CFg" id="rKW-6o-p8p"/>
                         <outlet property="studyLocationTextField" destination="zbM-TX-9gx" id="qWi-P2-6bH"/>
+                        <outlet property="urlActivityIndicator" destination="yJH-Mg-EkG" id="am8-Hb-6qn"/>
                         <outlet property="urlSubmitButton" destination="E0R-Cx-Td5" id="5na-Ju-3wy"/>
                         <outlet property="urlSubmitLabel" destination="SEP-ML-fuF" id="bIE-Y7-vWU"/>
                         <outlet property="urlSubmitTextField" destination="vHs-CM-xJZ" id="wsb-7b-rTm"/>
@@ -518,10 +542,16 @@
                                 <segue destination="FtJ-oH-20t" kind="presentation" id="rXz-j4-chS"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Logout" id="NQI-In-ils">
+                            <connections>
+                                <action selector="logoutButtonClicked:" destination="RHI-vO-3kt" id="ksG-qm-5IV"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="On the Map" id="vSF-4X-dM7"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="logoutButton" destination="NQI-In-ils" id="xAk-ij-OQ2"/>
                         <outlet property="postLocation" destination="evS-uq-7vW" id="Dnc-NN-1Hp"/>
                         <outlet property="refreshDataButton" destination="DTq-6s-UkG" id="8EK-ll-Z2k"/>
                         <outlet property="studentDataTableView" destination="jpI-da-59k" id="1wq-BQ-fCn"/>

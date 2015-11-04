@@ -15,7 +15,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var postLocation: UIBarButtonItem!
     @IBOutlet weak var refreshDataButton: UIBarButtonItem!
     @IBOutlet weak var studentMapView: MKMapView!
-    
+    @IBOutlet weak var logoutButton: UIBarButtonItem!
     
     //Get data from Parse and load the View
     override func viewDidLoad() {
@@ -25,6 +25,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         self.navigationController!.toolbar.hidden = true
         refreshDataButton.action = "refreshData"
         self.navigationItem.setRightBarButtonItems([refreshDataButton,postLocation], animated: true)
+        self.navigationItem.setLeftBarButtonItem(logoutButton, animated: true)
     }
     
     //Get most current data from Parse
@@ -32,9 +33,30 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         refreshData()
 }
 
+    //Logout of the current Udacity session and return to login screen
+    @IBAction func logoutButtonClicked(sender: UIBarButtonItem) {
+        logoutButton.enabled = false
+        UdacityClient.sharedInstance().attemptUdacityLogout{success, errorString in
+            if let errorString = errorString {
+                let alertView = UIAlertController(title: "\(OnTheMapConstants.AlertKeys.SomeWrong)", message: "\(OnTheMapConstants.AlertKeys.LogoutFailed)", preferredStyle: .Alert)
+                alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.presentViewController(alertView, animated: true, completion: nil)
+                    self.logoutButton.enabled = true
+                })
+            } else  {
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.logoutButton.enabled = true
+                    let controller = self.storyboard!.instantiateViewControllerWithIdentifier("LoginViewController") 
+                    self.presentViewController(controller, animated: true, completion: nil)
+                } )
+            }
+        }
+    }
+    
     //This was adapted from the MapKit example on Udacity
     //Create map pins from individual Parse data elements
-    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView! {
         
         let reuseId = "pin"
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
@@ -43,7 +65,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             pinView!.canShowCallout = true
             pinView!.pinColor = .Red
-            pinView!.rightCalloutAccessoryView = UIButton.buttonWithType(.DetailDisclosure) as! UIButton
+            pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
             
         }
         else {
@@ -56,10 +78,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     //This was adapted from the MapKit example on Udacity
     // This delegate method is implemented to respond to taps. It opens the system browser
     // to the URL specified in the annotationViews subtitle property.
-    func mapView(mapView: MKMapView!, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    func mapView(mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         
         if control == annotationView.rightCalloutAccessoryView {
-            UIApplication.sharedApplication().openURL(NSURL(string: annotationView.annotation.subtitle!)!)
+            UIApplication.sharedApplication().openURL(NSURL(string: annotationView.annotation!.subtitle!!)!)
         }
     }
     

@@ -36,16 +36,14 @@ class UdacityClient: NSObject {
     //Login function that returns sessionID and userID
     func attemptLoginWithUdacity(username: String?, password: String?, completionHandler: (success:Bool, errorString: String?) -> Void) {
         
-        var userName = username
-        var passWord = password
+        let userName = username
+        let passWord = password
         
         getSessionAndUserID (userName, password: passWord) { (success: Bool, errorString: String?) in
             if success {
-                completionHandler(success: true, errorString: "No errors!")
-                println("getSessionAndUserID success")
+                completionHandler(success: true, errorString: nil)
             }   else {
                 completionHandler(success: false, errorString: errorString)
-                println(errorString)
             }
         }
     }
@@ -67,7 +65,7 @@ class UdacityClient: NSObject {
                     self.convenience.checkResponse(response!) { success, responseCode in
                         if success {
                             
-                            var newData = self.convenience.subset(result)
+                            let newData = self.convenience.subset(result)
                             self.convenience.parseJSONWithCompletionHandler(newData) { (parsedData, parsedError) in
                                 
                                 if parsedError !=  nil {
@@ -79,21 +77,14 @@ class UdacityClient: NSObject {
                                         
                                         if let parsedAccountResult = parsedData["account"] as? NSDictionary {
                                             self.userKey = parsedAccountResult["key"] as? String
-                                            println(self.userKey)
-                                            
                                             self.getUserInfo(){(success, errorString) in
-                                                if success {
-                                                    println(UdacityClient.sharedInstance().firstName)
-                                                    println(UdacityClient.sharedInstance().lastName)
-                                                }
-                                                else {
-                                                    //Todo: Do something with string?
+                                                if let error = errorString {
+                                                    completionHandler(success: false, errorString: errorString)
                                                 }
                                             }
-                                            
-                                            completionHandler(success: true, errorString: "nil")
+                                            completionHandler(success: true, errorString: nil)
                                         } else {
-                                            //Todo: Handle error
+                                            completionHandler(success: false, errorString: "Failed to get Account Info")
                                         }
                                     }
                                 }
@@ -104,7 +95,7 @@ class UdacityClient: NSObject {
                                 let errorMessage = OnTheMapConstants.AlertKeys.Credentials
                                 completionHandler(success: false, errorString: (errorMessage))
                             } else {
-                            completionHandler(success: false, errorString: toString(responseCode))
+                            completionHandler(success: false, errorString: String(responseCode))
                             }
                         }
                 }
@@ -128,7 +119,7 @@ class UdacityClient: NSObject {
                     //Todo: Error handling!
                     return
                 } else {
-                     var newData = self.convenience.subset(data)
+                     var newData = self.convenience.subset(data!)
                     self.convenience.parseJSONWithCompletionHandler(newData) { (parsedData, parsedError) in
                         
                         if parsedError !=  nil {
@@ -137,11 +128,9 @@ class UdacityClient: NSObject {
                             if let parsedUserData = parsedData["user"] as? NSDictionary {
                                 if let parsedLastName = parsedUserData["last_name"] as? String
                                     {UdacityClient.sharedInstance().lastName = parsedLastName
-                                    println(parsedLastName)
                                     }
                                 if let parsedFirstName = parsedUserData["first_name"] as? String
                                     {UdacityClient.sharedInstance().firstName = parsedFirstName
-                                    println(UdacityClient.sharedInstance().firstName)
                                 }
                                    }
                                 }
@@ -150,11 +139,37 @@ class UdacityClient: NSObject {
                 }
             task.resume()
             }
+    
+    //Log out of the current Udacity Session
+    func attemptUdacityLogout(completionHandler: (success:Bool, errorString: String?) -> Void) {
+        let request = OnTheMapConvenience.sharedInstance().buildDeleteRequest()
+            OnTheMapConvenience.sharedInstance().buildTask(request) {(success, result, response, errorString) in
+                if success {
+                    
+                    self.convenience.checkResponse(response!) { success, responseCode in
+                        if success {
+                            
+                            let newData = self.convenience.subset(result)
+                            self.convenience.parseJSONWithCompletionHandler(newData) { (parsedData, parsedError) in
+                                
+                                if parsedError !=  nil {
+                                    completionHandler(success: false, errorString: parsedError?.localizedDescription)
+                                    
+                                } else {
+                                    completionHandler(success: true, errorString: nil)
+
+                                }
+                            }
+                        }
+                    }
+                }
+        }
+    }
 
     //Helper function for passing username and password to build requests
     func loginInfo(username: String, password: String) -> [String: AnyObject] {
         
-        var credentialArray = [
+        let credentialArray = [
             "udacity" : [
                 "username": username,
                 "password": password ]

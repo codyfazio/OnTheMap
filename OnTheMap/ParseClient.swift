@@ -36,11 +36,11 @@ class ParseClient: NSObject {
 
     //Functioning for getting student data from Parse
     func getStudents(completionHandler: (success: Bool, error: String?) -> Void) {
-        var headers = self.buildHeaders()
+        let headers = self.buildHeaders()
         var passedBody : [String : AnyObject]?
         var mutableParameters : [String : AnyObject]?
         
-        var getStudentRequest = convenience.buildGetRequest(OnTheMapConstants.Constants.BaseParseURLSecure, method: OnTheMapConstants.Methods.StudentLocation, passedBody: passedBody, headers: headers, mutableParameters: mutableParameters)
+        let getStudentRequest = convenience.buildGetRequest(OnTheMapConstants.Constants.BaseParseURLSecure, method: OnTheMapConstants.Methods.StudentLocation, passedBody: passedBody, headers: headers, mutableParameters: mutableParameters)
         if getStudentRequest != nil {
             
             convenience.buildTask(getStudentRequest!) {success, data, response, downloadError in
@@ -60,7 +60,7 @@ class ParseClient: NSObject {
                                 }
                             }
                         } else {
-                                completionHandler(success: false, error: toString(responseCode))
+                                completionHandler(success: false, error: String(responseCode))
                                 }
                             }
                     }
@@ -71,11 +71,11 @@ class ParseClient: NSObject {
     //Function that takes users location and specified URL and posts them to Parse
     func postUserData(completionHandler: (success: Bool, error: String?) -> Void) {
     
-        var headers = self.buildHeaders()
-        var passedBody = buildUserDataPassedBody()
+        let headers = self.buildHeaders()
+        let passedBody = buildUserDataPassedBody()
         var mutableParameters : [String : AnyObject]?
         
-        var postUserDataRequest = convenience.buildPostRequest(OnTheMapConstants.Constants.BaseParseURLSecure, method: OnTheMapConstants.Methods.StudentLocation, passedBody: passedBody, headers: headers, mutableParameters: mutableParameters)
+        let postUserDataRequest = convenience.buildPostRequest(OnTheMapConstants.Constants.BaseParseURLSecure, method: OnTheMapConstants.Methods.StudentLocation, passedBody: passedBody, headers: headers, mutableParameters: mutableParameters)
         
         if postUserDataRequest != nil {
             
@@ -83,7 +83,6 @@ class ParseClient: NSObject {
                 if downloadError != nil {completionHandler(success: false, error: downloadError!)}
                 else {
                     completionHandler(success: true, error: nil)
-                    println(NSString(data: data, encoding: NSUTF8StringEncoding))
                 }
             }
                 task.resume()
@@ -93,7 +92,7 @@ class ParseClient: NSObject {
     //Necessary userInfo for posting to Parse
     func buildUserDataPassedBody() -> [String : AnyObject] {
         
-        var passedBody : [String : AnyObject] = [
+        let passedBody : [String : AnyObject] = [
             
             "uniqueKey" : UdacityClient.sharedInstance().userKey!,
             "firstName" : UdacityClient.sharedInstance().firstName!,
@@ -132,8 +131,8 @@ class ParseClient: NSObject {
             let lat = CLLocationDegrees(student.latitude)
             let long = CLLocationDegrees(student.longitude)
             
-            var annotation = MKPointAnnotation()
-            var title = student.firstName + " " + student.lastName
+            let annotation = MKPointAnnotation()
+            let title = student.firstName + " " + student.lastName
             
             annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
             annotation.title = title

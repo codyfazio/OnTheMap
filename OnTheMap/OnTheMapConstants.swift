@@ -55,7 +55,8 @@ class OnTheMapConstants {
         static let ShareLocation = "Please enter the location you would like to share!"
         static let Password = "Please enter your password!"
         static let Username = "Please enter your username!"
-        static let Credentials = "Please check your credentials and try again"
+        static let Credentials = "Please check your credentials and try again."
+        static let LogoutFailed = "We're sorry, please try again momentarily."
         
     }
    }

@@ -15,6 +15,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var postLocation: UIBarButtonItem!
     @IBOutlet weak var refreshDataButton: UIBarButtonItem!
     @IBOutlet weak var studentDataTableView: UITableView!
+    @IBOutlet weak var logoutButton: UIBarButtonItem!
     
     
     //Get data for manipulation from Parse and configure the UI
@@ -43,6 +44,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.navigationController!.toolbar.hidden = true
         self.refreshDataButton.action = "reloadTableData"
         self.navigationItem.setRightBarButtonItems([refreshDataButton,postLocation], animated: true)
+        self.navigationItem.setLeftBarButtonItem(logoutButton, animated: true)
            }
     
     //Get most recent student data
@@ -50,11 +52,30 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.studentDataTableView.reloadData()
     }
 
+    @IBAction func logoutButtonClicked(sender: UIBarButtonItem) {
+        logoutButton.enabled = false
+        UdacityClient.sharedInstance().attemptUdacityLogout{success, errorString in
+            if let errorString = errorString {
+                let alertView = UIAlertController(title: "\(OnTheMapConstants.AlertKeys.SomeWrong)", message: "\(OnTheMapConstants.AlertKeys.LogoutFailed)", preferredStyle: .Alert)
+                alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.presentViewController(alertView, animated: true, completion: nil)
+                    self.logoutButton.enabled = true
+                })
+            } else  {
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.logoutButton.enabled = true
+                    let controller = self.storyboard!.instantiateViewControllerWithIdentifier("LoginViewController") 
+                    self.presentViewController(controller, animated: true, completion: nil)
+                } )
+            }
+
+            }
+    }
     
     //Get number of student objects
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-          println(ParseClient.sharedInstance().studentInfo.count)
           return ParseClient.sharedInstance().studentInfo.count
     }
     
@@ -64,18 +85,17 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     //Create and configure table cells
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("studentCell") as! UITableViewCell
-        
         let student = ParseClient.sharedInstance().studentInfo[indexPath.row]
+        let cell = tableView.dequeueReusableCellWithIdentifier("studentCell") as UITableViewCell!
+        
         cell.textLabel?.text = student.firstName + " " + student.lastName
-        print (cell.textLabel?.text)
         cell.detailTextLabel?.text = student.mediaURL
         
         return cell
     }
     
     //If cells are selected, redirect to Safari and open specified URL
-    func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         OnTheMapConvenience.sharedInstance().goToURL(ParseClient.sharedInstance().studentInfo[indexPath.row].mediaURL)
     }
 
@@ -85,6 +105,8 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
 
 }
 
+    
+    
 }
 
 
