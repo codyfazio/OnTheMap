@@ -54,7 +54,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     @IBAction func logoutButtonClicked(sender: UIBarButtonItem) {
         logoutButton.enabled = false
-        UdacityClient.sharedInstance().attemptUdacityLogout{success, errorString in
+        UdacityClient.sharedInstance.attemptUdacityLogout{success, errorString in
             if let errorString = errorString {
                 let alertView = UIAlertController(title: "\(OnTheMapConstants.AlertKeys.SomeWrong)", message: "\(OnTheMapConstants.AlertKeys.LogoutFailed)", preferredStyle: .Alert)
                 alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))

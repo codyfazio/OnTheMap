@@ -95,9 +95,9 @@ class ParseClient: NSObject {
         
         let passedBody : [String : AnyObject] = [
             
-            "uniqueKey" : UdacityClient.sharedInstance().userKey!,
-            "firstName" : UdacityClient.sharedInstance().firstName!,
-            "lastName"  : UdacityClient.sharedInstance().lastName!,
+            "uniqueKey" : UdacityClient.sharedInstance.userKey!,
+            "firstName" : UdacityClient.sharedInstance.firstName!,
+            "lastName"  : UdacityClient.sharedInstance.lastName!,
             "mapString" : ParseClient.sharedInstance().mapString!,
             "mediaURL"  : ParseClient.sharedInstance().mediaURL!,
             "latitude"  : ParseClient.sharedInstance().latitude! ,

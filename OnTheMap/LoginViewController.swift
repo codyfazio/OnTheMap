@@ -75,7 +75,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         if (usernameEdited != nil && username?.isEmpty == false) && (passwordEdited != nil && password?.isEmpty == false) {
         
         //If so, pass username and password into function and attempt login
-        UdacityClient.sharedInstance().attemptLoginWithUdacity(username, password: password) { (success, errorString) -> Void in
+        UdacityClient.sharedInstance.attemptLoginWithUdacity(username, password: password) { (success, errorString) -> Void in
             
             //If login is successful, segue to tab controller with Table and Map
             if success {
