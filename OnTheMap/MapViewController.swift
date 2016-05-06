@@ -67,11 +67,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             pinView!.pinColor = .Red
             pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
             
-        }
-        else {
+        } else {
             pinView!.annotation = annotation
         }
-        
         return pinView
     }
     
@@ -88,23 +86,20 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     //A function that uses Parse to get the individual Student objects for creating pins
     func refreshData () {
         ParseClient.sharedInstance.getStudents() { (success, errorString) in
-            if errorString != nil{
-                    let alertView = UIAlertController(title: OnTheMapConstants.AlertKeys.SomeWrong, message: errorString!, preferredStyle: .Alert)
-                    alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.presentViewController(alertView, animated: true, completion: nil)
-                    })
-                
-            }else{
-                //Create and call a function in our shared instance to annotate Map Data
-                
-                ParseClient.sharedInstance.refreshAnnotationsForMap()
-                dispatch_async(dispatch_get_main_queue()){
-                    self.studentMapView.removeAnnotations(self.studentMapView.annotations)
-                    self.studentMapView.addAnnotations(ParseClient.sharedInstance.annotations)
-                }
+            guard errorString != nil else {
+                let alertView = UIAlertController(title: OnTheMapConstants.AlertKeys.SomeWrong, message: errorString!, preferredStyle: .Alert)
+                alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.presentViewController(alertView, animated: true, completion: nil)
+                })
+                return
+            }
+            //Create and call a function in our shared instance to annotate Map Data
+            ParseClient.sharedInstance.refreshAnnotationsForMap()
+            dispatch_async(dispatch_get_main_queue()){
+                self.studentMapView.removeAnnotations(self.studentMapView.annotations)
+                self.studentMapView.addAnnotations(ParseClient.sharedInstance.annotations)
             }
         }
-
     }
 }
