@@ -51,10 +51,7 @@ struct Student {
     //Function for creating an array of student structs
     static func studentInfoFromData(results: NSArray) -> [Student]{
         var students = [Student]()
-        
-        for result in results {
-            students.append(Student(dictionary: result as! [String : AnyObject]))
-        }
+        students = results.map({Student(dictionary: $0 as! [String : AnyObject])})
         return students
     }
     

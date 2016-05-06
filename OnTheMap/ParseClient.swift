@@ -55,6 +55,7 @@ class ParseClient: NSObject {
                             else {
                                 let result = parsedData["results"] as? NSArray
                                 
+                                self.studentInfo.removeAll()
                                 self.studentInfo = Student.studentInfoFromData(result!)
                                 completionHandler(success: true, error: nil)
                                 }
@@ -124,10 +125,13 @@ class ParseClient: NSObject {
     }
 
     //Function that takes the student data objects created from Parse and packages them for making map pins
-    func buildAnnotations() {
+    
+    func refreshAnnotationsForMap() {
+        annotations = studentInfo.map({buildAnnotation($0)})
+    }
+    
+    func buildAnnotation(student: Student) -> MKPointAnnotation {
         
-        for student in self.studentInfo {
-            
             let lat = CLLocationDegrees(student.latitude)
             let long = CLLocationDegrees(student.longitude)
             
@@ -138,9 +142,7 @@ class ParseClient: NSObject {
             annotation.title = title
             annotation.subtitle = student.mediaURL
             
-            self.annotations.append(annotation)
-        }
-        
+            return annotation
     }
     
     //Create global instance of Parse client

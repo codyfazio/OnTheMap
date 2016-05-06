@@ -97,9 +97,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 
             }else{
                 //Create and call a function in our shared instance to annotate Map Data
-                ParseClient.sharedInstance().buildAnnotations()
                 
+                ParseClient.sharedInstance().refreshAnnotationsForMap()
                 dispatch_async(dispatch_get_main_queue()){
+                    self.studentMapView.removeAnnotations(self.studentMapView.annotations)
                     self.studentMapView.addAnnotations(ParseClient.sharedInstance().annotations)
                 }
             }
