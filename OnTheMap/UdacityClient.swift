@@ -54,9 +54,12 @@ class UdacityClient: NSObject {
         var userName = username
         var passWord = password
         var headers : [String : AnyObject]?
-        var mutableParameters : [String :AnyObject]?
+        var mutableParameters : [String :AnyObject]? = [
+            OnTheMapConstants.Methods.Limit : 100,
+            OnTheMapConstants.Methods.Order : "-updatedAt"
+        ]
         var request : NSMutableURLRequest?
-        request = convenience.buildPostRequest(OnTheMapConstants.Constants.BaseURL, method: OnTheMapConstants.Methods.Session, passedBody: self.loginInfo(username!, password: password!), headers: headers, mutableParameters: mutableParameters)
+        request = convenience.buildPostRequest(OnTheMapConstants.Constants.BaseURLSecure, method: OnTheMapConstants.Methods.Session, passedBody: self.loginInfo(username!, password: password!), headers: headers, mutableParameters: mutableParameters)
         if request != nil {
         
             convenience.buildTask(request!) {(success, result, response, errorString) in

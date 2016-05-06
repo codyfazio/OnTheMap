@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ADC451C71CDC12DB00CF3878 /* ViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC451C61CDC12DB00CF3878 /* ViewControllerExtensions.swift */; };
 		ADF763931B09C50A00B7744C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF763921B09C50A00B7744C /* AppDelegate.swift */; };
 		ADF763961B09C50A00B7744C /* OnTheMap.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = ADF763941B09C50A00B7744C /* OnTheMap.xcdatamodeld */; };
 		ADF7639B1B09C50A00B7744C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADF763991B09C50A00B7744C /* Main.storyboard */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		ADC451C61CDC12DB00CF3878 /* ViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerExtensions.swift; sourceTree = "<group>"; };
 		ADF7638D1B09C50A00B7744C /* OnTheMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnTheMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADF763911B09C50A00B7744C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADF763921B09C50A00B7744C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				ADF763C31B09CBA700B7744C /* PostViewController.swift */,
 				ADF763C51B09CBC900B7744C /* MapViewController.swift */,
 				ADF763C71B09CBE600B7744C /* TableViewController.swift */,
+				ADC451C61CDC12DB00CF3878 /* ViewControllerExtensions.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 				ADF763BE1B09C9E100B7744C /* ParseClient.swift in Sources */,
 				ADF763CA1B09DFAA00B7744C /* HarvestedData.swift in Sources */,
 				ADF763C01B09CA2800B7744C /* OnTheMapConvenience.swift in Sources */,
+				ADC451C71CDC12DB00CF3878 /* ViewControllerExtensions.swift in Sources */,
 				ADF763C61B09CBC900B7744C /* MapViewController.swift in Sources */,
 				ADF763BC1B09C9D100B7744C /* UdacityClient.swift in Sources */,
 				ADF763C81B09CBE600B7744C /* TableViewController.swift in Sources */,

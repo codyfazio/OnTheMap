@@ -40,6 +40,8 @@ class OnTheMapConstants {
         
         //MARK: Authentication
         static let Session = "session"
+        static let Limit = "limit"
+        static let Order = "order"
         
         static let StudentLocation = "1/classes/StudentLocation"
     }

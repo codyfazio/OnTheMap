@@ -45,7 +45,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(animated: Bool) {
         
         //Begin listening for keyboard notifications to properly adjust view while keyboard is active
-        self.subscribeToKeyboardNotifications()
+        //subscribeToKeyboardNotifications()
         
         //Reset UI Elements in case they have changed
         configureUI()
@@ -55,7 +55,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewWillDisappear(animated)
         
         //Stop monitoring keyboard actions
-        self.unsubscribeFromKeyboardNotifications()
+       // unsubscribeFromKeyboardNotifications()
     }
 
 
@@ -157,40 +157,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    //Listen for calls to and dismissal of the keyboard
-    func subscribeToKeyboardNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    //Stop listening for keyboard calls
-    func unsubscribeFromKeyboardNotifications() {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name:
-            UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    //Get keyboard size and move view up so as to obstruct it
-    func keyboardWillShow(notification: NSNotification) {
-        if passwordTextField.editing {
-            self.view.frame.origin.y -= getKeyboardHeight(notification)
-        }
-    }
-    
-    //Get keyboard size and lower view back to its original state
-    func keyboardWillHide(notification: NSNotification) {
-        if passwordTextField.editing {
-            passwordTextField.endEditing(true)
-            self.view.frame.origin.y += getKeyboardHeight(notification) }
-    }
-    
-    //Function for getting keyboard height
-    func getKeyboardHeight(notification: NSNotification) -> CGFloat {
-        let userInfo = notification.userInfo
-        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
-        return keyboardSize.CGRectValue().height
-    }
-    
+       
 
 
 
