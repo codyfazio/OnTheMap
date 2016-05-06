@@ -21,21 +21,9 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     //Get data for manipulation from Parse and configure the UI
     override func viewDidLoad() {
         super.viewDidLoad()
-        ParseClient.sharedInstance.getStudents() { (success, errorString) in
-            if errorString != nil{
-                dispatch_async(dispatch_get_main_queue()){
-                    let alertView = UIAlertController(title: OnTheMapConstants.AlertKeys.SomeWrong, message: errorString!, preferredStyle: .Alert)
-                    alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.presentViewController(alertView, animated: true, completion: nil)
-                    })
-                }
-            }else{
-                //Load student objects created from Parse data into table
-                dispatch_async(dispatch_get_main_queue()){
-                    self.studentDataTableView.reloadData()
-                }
-            }
+        
+        if ParseClient.sharedInstance.studentInfo.isEmpty {
+            refreshData()
         }
         
         //Configure UI and set delegates
@@ -45,7 +33,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.refreshDataButton.action = #selector(TableViewController.reloadTableData)
         self.navigationItem.setRightBarButtonItems([refreshDataButton,postLocation], animated: true)
         self.navigationItem.setLeftBarButtonItem(logoutButton, animated: true)
-           }
+    }
     
     //Get most recent student data
     override func viewWillAppear(animated: Bool) {
@@ -55,22 +43,21 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBAction func logoutButtonClicked(sender: UIBarButtonItem) {
         logoutButton.enabled = false
         UdacityClient.sharedInstance.attemptUdacityLogout{success, errorString in
-            if let errorString = errorString {
+            if !success {
                 let alertView = UIAlertController(title: "\(OnTheMapConstants.AlertKeys.SomeWrong)", message: "\(OnTheMapConstants.AlertKeys.LogoutFailed)", preferredStyle: .Alert)
                 alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
                 dispatch_async(dispatch_get_main_queue(), {
                     self.presentViewController(alertView, animated: true, completion: nil)
                     self.logoutButton.enabled = true
                 })
-            } else  {
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.logoutButton.enabled = true
-                    let controller = self.storyboard!.instantiateViewControllerWithIdentifier("LoginViewController") 
-                    self.presentViewController(controller, animated: true, completion: nil)
-                } )
             }
-
-            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                self.logoutButton.enabled = true
+                let controller = self.storyboard!.instantiateViewControllerWithIdentifier("LoginViewController") 
+                self.presentViewController(controller, animated: true, completion: nil)
+            } )
+        }
     }
     
     //Get number of student objects
@@ -102,10 +89,25 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     func reloadTableData() {
         self.studentDataTableView.reloadData()
 
-}
-
+    }
     
-    
+    func refreshData() {
+        ParseClient.sharedInstance.getStudents() { (success, errorString) in
+            if !success {
+                dispatch_async(dispatch_get_main_queue()){
+                    let alertView = UIAlertController(title: OnTheMapConstants.AlertKeys.SomeWrong, message: errorString!, preferredStyle: .Alert)
+                    alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.presentViewController(alertView, animated: true, completion: nil)
+                    })
+                }
+            }
+            //Load student objects created from Parse data into table
+            dispatch_async(dispatch_get_main_queue()){
+                self.reloadTableData()
+            }
+        }
+    }
 }
 
 
