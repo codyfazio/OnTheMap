@@ -45,9 +45,9 @@ class UdacityClient: NSObject {
         
         getSessionAndUserID (userName, password: passWord) { (success: Bool, errorString: String?) in
             guard success else {
-                completionHandler(success: true, errorString: nil)
+                completionHandler(success: false, errorString: errorString)
                 return }
-            completionHandler(success: false, errorString: errorString)
+            completionHandler(success: true, errorString: nil)
         }
     }
     
@@ -125,7 +125,7 @@ class UdacityClient: NSObject {
                 let newData = self.convenience.subset(data!)
                 
                 self.convenience.parseJSONWithCompletionHandler(newData) { (parsedData, parsedError) in
-                    guard parsedError !=  nil else {
+                    guard parsedError ==  nil else {
                             completionHandler(success: false, errorString: parsedError?.localizedDescription)
                             return }
                     guard let parsedUserData = parsedData["user"] as? NSDictionary else {
@@ -140,6 +140,8 @@ class UdacityClient: NSObject {
                         return }
                     UdacityClient.sharedInstance.lastName = parsedLastName
                     UdacityClient.sharedInstance.firstName = parsedFirstName
+                    completionHandler(success: true, errorString: nil)
+
                     }
                 }
         task.resume()
