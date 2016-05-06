@@ -21,7 +21,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     //Get data for manipulation from Parse and configure the UI
     override func viewDidLoad() {
         super.viewDidLoad()
-        ParseClient.sharedInstance().getStudents() { (success, errorString) in
+        ParseClient.sharedInstance.getStudents() { (success, errorString) in
             if errorString != nil{
                 dispatch_async(dispatch_get_main_queue()){
                     let alertView = UIAlertController(title: OnTheMapConstants.AlertKeys.SomeWrong, message: errorString!, preferredStyle: .Alert)
@@ -42,7 +42,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.studentDataTableView.delegate = self
         self.studentDataTableView.dataSource = self
         self.navigationController!.toolbar.hidden = true
-        self.refreshDataButton.action = "reloadTableData"
+        self.refreshDataButton.action = #selector(TableViewController.reloadTableData)
         self.navigationItem.setRightBarButtonItems([refreshDataButton,postLocation], animated: true)
         self.navigationItem.setLeftBarButtonItem(logoutButton, animated: true)
            }
@@ -75,8 +75,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     //Get number of student objects
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-          return ParseClient.sharedInstance().studentInfo.count
+          return ParseClient.sharedInstance.studentInfo.count
     }
     
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -85,7 +84,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     //Create and configure table cells
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let student = ParseClient.sharedInstance().studentInfo[indexPath.row]
+        let student = ParseClient.sharedInstance.studentInfo[indexPath.row]
         let cell = tableView.dequeueReusableCellWithIdentifier("studentCell") as UITableViewCell!
         
         cell.textLabel?.text = student.firstName + " " + student.lastName
@@ -96,7 +95,7 @@ class TableViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     //If cells are selected, redirect to Safari and open specified URL
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        OnTheMapConvenience.sharedInstance().goToURL(ParseClient.sharedInstance().studentInfo[indexPath.row].mediaURL)
+        OnTheMapConvenience.sharedInstance().goToURL(ParseClient.sharedInstance.studentInfo[indexPath.row].mediaURL)
     }
 
     //Helper function for getting student data objects

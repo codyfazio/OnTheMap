@@ -71,9 +71,9 @@ class PostViewController: UIViewController, MKMapViewDelegate, UITextFieldDelega
                     let calculatedRegion = MKCoordinateRegionMakeWithDistance(placemark.location!.coordinate, regionRadius, regionRadius)
                     self.postMapView.addAnnotation(MKPlacemark(placemark: placemark))
                     self.postMapView.setRegion(calculatedRegion, animated: true)
-                    ParseClient.sharedInstance().mapString = self.studyLocationTextField.text
-                    ParseClient.sharedInstance().longitude = placemark.location!.coordinate.longitude as Double
-                    ParseClient.sharedInstance().latitude = placemark.location!.coordinate.latitude as Double
+                    ParseClient.sharedInstance.mapString = self.studyLocationTextField.text
+                    ParseClient.sharedInstance.longitude = placemark.location!.coordinate.longitude as Double
+                    ParseClient.sharedInstance.latitude = placemark.location!.coordinate.latitude as Double
                     
                     self.geocodeActivityIndicator.stopAnimating()
                     
@@ -115,8 +115,8 @@ class PostViewController: UIViewController, MKMapViewDelegate, UITextFieldDelega
             if OnTheMapConvenience.sharedInstance().verifyURL(self.urlSubmitTextField.text) {
             
             //If URL is valid, save URL and post the location and URL to Parse
-            ParseClient.sharedInstance().mediaURL = urlSubmitTextField.text
-            ParseClient.sharedInstance().postUserData(){(success, error) in
+            ParseClient.sharedInstance.mediaURL = urlSubmitTextField.text
+            ParseClient.sharedInstance.postUserData(){(success, error) in
                 if success {
                     self.dismissViewControllerAnimated(true, completion: nil)
                 } else {

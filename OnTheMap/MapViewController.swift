@@ -23,7 +23,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         refreshData()
         studentMapView.delegate = self
         self.navigationController!.toolbar.hidden = true
-        refreshDataButton.action = "refreshData"
+        refreshDataButton.action = #selector(MapViewController.refreshData)
         self.navigationItem.setRightBarButtonItems([refreshDataButton,postLocation], animated: true)
         self.navigationItem.setLeftBarButtonItem(logoutButton, animated: true)
     }
@@ -87,7 +87,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     //A function that uses Parse to get the individual Student objects for creating pins
     func refreshData () {
-        ParseClient.sharedInstance().getStudents() { (success, errorString) in
+        ParseClient.sharedInstance.getStudents() { (success, errorString) in
             if errorString != nil{
                     let alertView = UIAlertController(title: OnTheMapConstants.AlertKeys.SomeWrong, message: errorString!, preferredStyle: .Alert)
                     alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
@@ -98,10 +98,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }else{
                 //Create and call a function in our shared instance to annotate Map Data
                 
-                ParseClient.sharedInstance().refreshAnnotationsForMap()
+                ParseClient.sharedInstance.refreshAnnotationsForMap()
                 dispatch_async(dispatch_get_main_queue()){
                     self.studentMapView.removeAnnotations(self.studentMapView.annotations)
-                    self.studentMapView.addAnnotations(ParseClient.sharedInstance().annotations)
+                    self.studentMapView.addAnnotations(ParseClient.sharedInstance.annotations)
                 }
             }
         }

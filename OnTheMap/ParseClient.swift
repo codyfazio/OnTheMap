@@ -31,8 +31,10 @@ class ParseClient: NSObject {
     override init() {
         session = NSURLSession.sharedSession()
         super.init()
-  
     }
+    
+    //MARK: Shared Instance 
+    static let sharedInstance = ParseClient()
 
     //Functioning for getting student data from Parse
     func getStudents(completionHandler: (success: Bool, error: String?) -> Void) {
@@ -41,33 +43,33 @@ class ParseClient: NSObject {
         var mutableParameters : [String : AnyObject]?
         
         let getStudentRequest = convenience.buildGetRequest(OnTheMapConstants.Constants.BaseParseURLSecure, method: OnTheMapConstants.Methods.StudentLocation, passedBody: passedBody, headers: headers, mutableParameters: mutableParameters)
-        if getStudentRequest != nil {
+        guard getStudentRequest != nil else {
+            completionHandler(success: false, error: "Error creating getStudentRequest.")
+            return }
             
-            convenience.buildTask(getStudentRequest!) {success, data, response, downloadError in
-            if downloadError != nil {completionHandler(success: false, error: downloadError!)}
-            else {
-                self.convenience.checkResponse(response!) {success, responseCode in
+        convenience.buildTask(getStudentRequest!) {success, data, response, downloadError in
+            guard downloadError == nil else {
+                completionHandler(success: false, error: downloadError!)
+                return }
+            
+            self.convenience.checkResponse(response!) {success, responseCode in
+                guard success else {
+                    completionHandler(success: false, error: String(responseCode))
+                    return }
+
+                self.convenience.parseJSONWithCompletionHandler(data) {(parsedData, parsedError) in
+                    guard parsedError == nil else {
+                        completionHandler(success: false, error: parsedError!.localizedDescription)
+                        return }
                     
-                    if success {
-                        self.convenience.parseJSONWithCompletionHandler(data) {(parsedData, parsedError) in
-                            
-                            if parsedError != nil {completionHandler(success: false, error: parsedError!.localizedDescription)}
-                            else {
-                                let result = parsedData["results"] as? NSArray
-                                
-                                self.studentInfo.removeAll()
-                                self.studentInfo = Student.studentInfoFromData(result!)
-                                completionHandler(success: true, error: nil)
-                                }
-                            }
-                        } else {
-                                completionHandler(success: false, error: String(responseCode))
-                                }
-                            }
-                    }
+                    let result = parsedData["results"] as? NSArray
+                    self.studentInfo.removeAll()
+                    self.studentInfo = Student.studentInfoFromData(result!)
+                    completionHandler(success: true, error: nil)
                 }
             }
         }
+    }
 
     //Function that takes users location and specified URL and posts them to Parse
     func postUserData(completionHandler: (success: Bool, error: String?) -> Void) {
@@ -77,17 +79,16 @@ class ParseClient: NSObject {
         var mutableParameters : [String : AnyObject]?
         
         let postUserDataRequest = convenience.buildPostRequest(OnTheMapConstants.Constants.BaseParseURLSecure, method: OnTheMapConstants.Methods.StudentLocation, passedBody: passedBody, headers: headers, mutableParameters: mutableParameters)
-        
-        if postUserDataRequest != nil {
-            
-            let task = convenience.buildTask(postUserDataRequest!) {success, data, resposne, downloadError in
-                if downloadError != nil {completionHandler(success: false, error: downloadError!)}
-                else {
-                    completionHandler(success: true, error: nil)
-                }
-            }
-                task.resume()
+        guard postUserDataRequest != nil else {
+            completionHandler(success: false, error: "Error create data request to post user.")
+            return }
+        let task = convenience.buildTask(postUserDataRequest!) {success, data, resposne, downloadError in
+            guard downloadError == nil else {
+                completionHandler(success: false, error: downloadError!)
+                return }
+            completionHandler(success: true, error: nil)
         }
+        task.resume()
     }
     
     //Necessary userInfo for posting to Parse
@@ -98,17 +99,14 @@ class ParseClient: NSObject {
             "uniqueKey" : UdacityClient.sharedInstance.userKey!,
             "firstName" : UdacityClient.sharedInstance.firstName!,
             "lastName"  : UdacityClient.sharedInstance.lastName!,
-            "mapString" : ParseClient.sharedInstance().mapString!,
-            "mediaURL"  : ParseClient.sharedInstance().mediaURL!,
-            "latitude"  : ParseClient.sharedInstance().latitude! ,
-            "longitude" : ParseClient.sharedInstance().longitude!
+            "mapString" : ParseClient.sharedInstance.mapString!,
+            "mediaURL"  : ParseClient.sharedInstance.mediaURL!,
+            "latitude"  : ParseClient.sharedInstance.latitude! ,
+            "longitude" : ParseClient.sharedInstance.longitude!
             ]
         
         return passedBody
-        
-        
     }
-    
     
     //Helper function for validation when making request with Parse
     func buildHeaders() -> [String: String] {
@@ -125,37 +123,23 @@ class ParseClient: NSObject {
     }
 
     //Function that takes the student data objects created from Parse and packages them for making map pins
-    
     func refreshAnnotationsForMap() {
         annotations = studentInfo.map({buildAnnotation($0)})
     }
     
     func buildAnnotation(student: Student) -> MKPointAnnotation {
         
-            let lat = CLLocationDegrees(student.latitude)
-            let long = CLLocationDegrees(student.longitude)
-            
-            let annotation = MKPointAnnotation()
-            let title = student.firstName + " " + student.lastName
-            
-            annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
-            annotation.title = title
-            annotation.subtitle = student.mediaURL
-            
-            return annotation
+        let lat = CLLocationDegrees(student.latitude)
+        let long = CLLocationDegrees(student.longitude)
+        let title = student.firstName + " " + student.lastName
+        
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+        annotation.title = title
+        annotation.subtitle = student.mediaURL
+        return annotation
     }
-    
-    //Create global instance of Parse client
-    class func sharedInstance() -> ParseClient {
-    
-        struct Singleton {
-            static var sharedInstance = ParseClient()
-        }
-    
-        return Singleton.sharedInstance
-    }
-
-    }
+}
 
 
 

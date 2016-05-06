@@ -168,7 +168,7 @@ class OnTheMapConvenience: NSObject {
     func isConnectedToNetwork()->Bool{
             
         var status: Bool?
-        let urlPath: String = "http://www.google.com"
+        let urlPath: String = "https://www.google.com"
         let url: NSURL = NSURL(string: urlPath)!
         let request: NSURLRequest = NSURLRequest(URL: url)
         var response: NSURLResponse?
