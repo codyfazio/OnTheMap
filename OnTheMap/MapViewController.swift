@@ -86,7 +86,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     //A function that uses Parse to get the individual Student objects for creating pins
     func refreshData () {
         ParseClient.sharedInstance.getStudents() { (success, errorString) in
-            guard errorString != nil else {
+            guard errorString == nil else {
                 let alertView = UIAlertController(title: OnTheMapConstants.AlertKeys.SomeWrong, message: errorString!, preferredStyle: .Alert)
                 alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
                 dispatch_async(dispatch_get_main_queue(), {
